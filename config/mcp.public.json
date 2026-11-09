@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "mobysuite-reports": {
+      "type": "streamable-http",
+      "url": "https://mcp.mobysuite.com/{cliente}/reports",
+      "extensions": {
+        "com.openai": {
+          "auth": {
+            "type": "oauth",
+            "client": {
+              "mode": "dcr"
+            },
+            "baseScopes": [
+              "mcp:tools"
+            ]
+          },
+          "urlTemplates": [
+            "https://mcp.mobysuite.com/{cliente}/reports"
+          ]
+        }
+      }
+    }
+  }
+}

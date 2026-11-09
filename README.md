@@ -1,87 +1,76 @@
 # Mobysuite Reports para OpenAI
 
-Borrador del complemento de Mobysuite para consultar reportes de ventas desde un cliente MCP compatible. Destinado a gerentes o administradores en Chile. El complemento es gratuito.
+Complemento gratuito para consultar reportes de ventas de Mobysuite, destinado a gerentes y administradores en Chile. **En preparación; no publicado en el directorio público de OpenAI.**
 
-**Estado: en preparación; no publicado ni listo para enviar a revisión.**
+## Instalar en Codex desde GitHub
 
-## Contenido
-
-- `plugin.json`: ficha, disponibilidad en Chile y metadatos de publicación.
-- `mcp.json`: conexión remota con OAuth y registro dinámico de clientes (DCR).
-- `assets/icon.png`: icono oficial de Mobysuite, preparado en PNG de 512 × 512.
-- `docs/pages/`: borradores HTML de privacidad, términos y soporte. Contienen decisiones pendientes y no deben publicarse como textos definitivos sin revisión.
-- `scripts/package.py`: validaciones básicas y generación del ZIP de borrador.
-
-## Conexión
-
-La URL del MCP varía según el cliente. La configuración propone una plantilla OpenAI `urlTemplates`:
-
-```text
-https://mcp.mobysuite.com/{cliente}/reports
-```
-
-Ejemplos de URLs concretas facilitadas por el publicador:
-
-- Copérnico: `https://mcp.mobysuite.com/copernico/reports`.
-- Imagina: `https://mcp.mobysuite.com/imagina/reports`.
-
-En el manifiesto portable, `url` contiene la misma plantilla, para no fijar un cliente predeterminado. El soporte y la configuración de esta plantilla deben validarse al importar el paquete en el portal y en el host de destino; no se ha comprobado el flujo de selección del cliente. En clientes MCP genéricos sin soporte de esta extensión, configurar la URL concreta de la organización; no enviar literalmente las llaves al servidor.
-
-Cada conexión debe completar OAuth para su recurso concreto. El valor de `cliente` identifica la ruta, pero no concede acceso. El servidor debe verificar la organización y el rol autorizado y rechazar un token de otra organización. Esto requiere implementación y pruebas en el servidor, que no se incluye en este repositorio.
-
-El servidor anuncia OAuth con flujo de código de autorización, PKCE S256, registro dinámico y scope `mcp:tools`. El transporte `streamable-http` está configurado como propuesta; falta verificar el handshake y la conexión autenticada.
-
-No incluyas contraseñas, tokens ni credenciales de revisores en este repositorio. El cliente debe completar OAuth mediante el flujo del host. La cuenta de prueba para revisores se configura en los campos seguros del portal.
-
-## Agregar este repositorio como marketplace en Codex
-
-El catálogo está en `.agents/plugins/marketplace.json` y referencia el complemento situado en la raíz del repositorio.
-
-En **Complementos → Agregar → Agregar marketplace**, usa:
+En **Complementos → Agregar → Agregar marketplace**:
 
 - Origen: `https://github.com/apptec-cl/mcp-config-mobysuite-openai`
-- Referencia de Git: `main`
-- Rutas dispersas: dejar vacío.
+- Referencia: `main`
+- Rutas dispersas: vacío.
 
-Después de agregar el marketplace, abre el directorio, selecciona la fuente **Mobysuite** e instala **Mobysuite Reports**. La configuración de compatibilidad de Codex (`.codex-plugin/plugin.json` y `.mcp.json`) usa la URL concreta de Copérnico para la prueba elegida por el creador. El soporte de la plantilla en instalaciones Git no está verificado; no se utiliza en ese archivo local. OAuth y el descubrimiento de herramientas siguen pendientes hasta completar la autorización. Agregar el catálogo no publica el complemento en el directorio público de OpenAI.
+En la fuente **Mobysuite**, elige la organización antes de instalar:
 
-## Generar el paquete ZIP
+| Complemento | Cliente | URL MCP |
+| --- | --- | --- |
+| Mobysuite Reports · Copérnico | Copérnico | `https://mcp.mobysuite.com/copernico/reports` |
+| Mobysuite Reports · Imagina | Imagina | `https://mcp.mobysuite.com/imagina/reports` |
 
-Requiere Python 3; no necesita dependencias adicionales.
+La raíz del repositorio contiene la variante de Copérnico; `clients/imagina/` contiene la variante de Imagina. Se usan URLs concretas y nombres de servidor diferentes. Elegir una ruta no concede acceso: el servidor debe comprobar la organización y el rol del usuario.
+
+## Conexión y onboarding
+
+1. Actualiza el marketplace e instala la variante de tu organización.
+2. Completa la acción de conexión OAuth ofrecida por Codex para el MCP del complemento. La política del catálogo es `ON_INSTALL`. Si el host reutiliza una sesión válida, puede no mostrar otro formulario.
+3. En el formulario de **Mobysuite**, introduce las credenciales de integración (Client ID y Client secret) y completa la autorización. No las pegues en el chat ni en el repositorio.
+4. La guía de setup del complemento comprueba la organización, el estado de conexión y las herramientas. No crea otro MCP independiente para simular una instalación correcta.
+5. Prueba una lectura mínima. Autenticación completada no equivale a que todas las herramientas respondan correctamente.
+
+La instalación desde Git usa descubrimiento OAuth estándar: el servidor anuncia el recurso protegido, el servidor de autorización, registro dinámico, PKCE S256 y scope `mcp:tools`.
+
+### Corrección de la versión 0.1.2
+
+El lector local de Codex instalado descartó el MCP cuando la entrada de `mcp.json` contenía `extensions.com.openai`. Se reprodujo con configuraciones mínimas: el servidor básico `streamable-http` se descubre, pero agregar `auth` o `urlTemplates` bajo esa extensión deja `mcpServers` vacío. Añadir un overlay no resolvía la entrada portable inválida para ese lector.
+
+La configuración Git ahora usa el MCP básico con URL concreta. El lector de Codex reconoce ambos servidores y sus skills de setup, y resuelve las rutas del icono. La instalación, la acción automática de conexión y el resultado visual deben verificarse además en el host; los registros de prueba se detallan en `docs/mcp-diagnostics.md`.
+
+## Archivos y generación
+
+- `plugin.json`, `mcp.json`, `skills/setup/`, `assets/`: variante Git de Copérnico.
+- `.codex-plugin/plugin.json` y `.mcp.json`: compatibilidad sincronizada para clientes anteriores.
+- `clients/imagina/`: variante Git generada para Imagina.
+- `.agents/plugins/marketplace.json`: catálogo con ambas variantes.
+- `config/mcp.public.json`: propuesta de configuración pública con OAuth y plantilla `{cliente}`, pendiente de validación en el portal.
+- `docs/pages/`: borradores HTML de privacidad, términos y soporte. No son textos definitivos.
+
+Requiere Python 3, sin dependencias adicionales:
 
 ```sh
+python3 scripts/build_client_plugins.py
 python3 scripts/package.py
 ```
 
-Genera `dist/mobysuite-reports-DRAFT.zip`, con un único directorio `mobysuite-reports/` que contiene los manifiestos y el icono. El ZIP excluye las páginas de documentación y archivos locales. Estas validaciones son básicas: no sustituyen la validación ni el escaneo del portal de OpenAI.
+El primer comando sincroniza Imagina con los componentes comunes. El segundo valida los archivos y genera `dist/mobysuite-reports-DRAFT.zip` para preparar la publicación pública: usa nombre genérico, `config/mcp.public.json` y el icono. Excluye el catálogo, las variantes Git, el setup específico de una organización y las páginas HTML. No es un ZIP listo para enviar a revisión.
 
-## Verificado el 9 de noviembre de 2026
+La plantilla de publicación propuesta es `https://mcp.mobysuite.com/{cliente}/reports`. Su importación y flujo de selección aún deben validarse en el portal. La presencia de esta plantilla en el borrador público no implica que el Codex local ofrezca un formulario para resolverla. Para otros clientes, el mantenedor debe preparar una variante con la URL confirmada.
 
-- Los endpoints de Copérnico e Imagina devuelven HTTP 401 sin token y anuncian metadatos del recurso protegido correspondientes a su ruta. Ambos anuncian el mismo servidor de autorización y el scope `mcp:tools`.
-- Los metadatos OAuth publicados anuncian `/authorize`, `/token` y `/register`, con PKCE S256.
-- Los manifiestos se pueden leer como JSON y el ZIP generado contiene los componentes esperados.
-- El icono se obtuvo de `https://mobysuite.com/icon.svg` y se preparó sobre un lienzo cuadrado.
+## Estado de pruebas
 
-Según lo confirmado por el publicador, el MCP solo consulta datos y no guarda consultas ni resultados. El acceso está destinado a gerentes o administradores. Estas declaraciones aún deben verificarse contra la implementación: este repositorio contiene la configuración del complemento, no el servidor ni el control de acceso.
+- Los endpoints de Copérnico e Imagina responden HTTP 401 sin token y anuncian recursos OAuth correspondientes a su ruta.
+- La conexión independiente `mobysuite` de Copérnico completó OAuth y expuso 18 herramientas. Esa prueba es independiente del complemento Git.
+- `reports_list_projects` falló por formato de salida estructurada en el servidor: véase [diagnóstico](docs/mcp-diagnostics.md).
+- El icono oficial procede de `https://mobysuite.com/icon.svg` y está preparado en PNG de 512 × 512.
 
-## Pendiente antes de la publicación
+Según el publicador, el MCP solo consulta datos y no guarda consultas ni resultados; el acceso está destinado a gerentes o administradores. El servidor y su control de roles no están en este repositorio. El aislamiento entre organizaciones y el rechazo de tokens cruzados siguen pendientes de prueba.
 
-1. Revisar los borradores de privacidad y términos: completar razón social, tratamiento de credenciales OAuth y registros técnicos, proveedores y procedimiento de solicitudes de privacidad. Contacto confirmado: `soporte@mobysuite.com`.
-2. Publicar las páginas de soporte, privacidad y términos e incorporar sus URLs reales en `plugin.json`. La política existente en `https://mobysuite.com/cl/politicas` describe el sitio web y conexiones con Google; aún falta cubrir esta integración MCP.
-3. Verificar identidad del publicador y dominio en el portal de OpenAI.
-4. Validar la plantilla de URL en el portal y el host. Conectar por OAuth con URLs concretas de ambos clientes, verificar el transporte y descubrir las herramientas reales. Comprobar el rol autorizado y el aislamiento entre organizaciones, incluyendo el rechazo de tokens cruzados.
-5. Revisar los esquemas y anotaciones de herramientas; preparar y ejecutar cinco casos positivos y tres negativos con datos de prueba.
-6. Grabar una demo real, verificar que los revisores puedan verla e incorporar la URL y los casos al manifiesto.
-7. Generar e inspeccionar el paquete final, cargarlo en el portal y resolver los requisitos y hallazgos antes de enviarlo a revisión.
+## Pendiente para el directorio público
 
-La conexión independiente `mobysuite` completó OAuth y expuso 18 herramientas. Una prueba de `reports_list_projects` falló por el formato de salida estructurada del servidor. El control de roles, el aislamiento entre organizaciones y la conexión del propio complemento Git siguen pendientes. Véase [el diagnóstico MCP](docs/mcp-diagnostics.md). No se ha creado una publicación pública ni enviado el complemento a revisión.
+1. Revisar y completar las páginas de privacidad y términos: razón social, tratamiento de credenciales OAuth y registros técnicos, proveedores y solicitudes de privacidad. Contacto: `soporte@mobysuite.com`.
+2. Publicar soporte, privacidad y términos e incorporar URLs verificadas. La política actual de `https://mobysuite.com/cl/politicas` aún no describe esta integración MCP.
+3. Validar el paquete público y la plantilla en el portal; completar identidad y dominio.
+4. Corregir las respuestas del servidor y verificar permisos, esquemas y anotaciones de herramientas.
+5. Preparar y ejecutar cinco casos positivos y tres negativos, grabar una demo real y configurar acceso seguro para revisores.
+6. Resolver las comprobaciones del portal antes del envío a revisión.
 
-Referencia: [Envío y publicación de complementos en OpenAI](https://developers.openai.com/plugins/deploy/submission).
-
-## Diagnóstico de instalación Git (0.1.1)
-
-La instalación 0.1.0 mostraba la ficha, pero no aparecía un arranque del MCP del complemento en los registros. Se añadió el manifiesto de compatibilidad de Codex que referencia explícitamente `.mcp.json`, con una URL concreta para Copérnico. Las rutas de icono ahora empiezan con `./`. Estos cambios requieren actualizar el marketplace y reinstalar o actualizar el complemento; todavía se debe comprobar el resultado en la interfaz.
-
-El ZIP público mantiene el formato portable y su plantilla pendiente de validación. No incluye el overlay de prueba para Copérnico. Para distribuir a otras organizaciones en Codex, primero hay que verificar un mecanismo soportado para elegir la URL concreta; este borrador no proporciona todavía ese selector.
-
-Se encontró además un MCP independiente llamado `mobysuite` configurado en el Codex del creador, con la URL de Copérnico y sin iniciar sesión. Su OAuth se inicia con `codex mcp login mobysuite`; esa conexión es independiente del complemento `mobysuite-reports`. El formulario del proveedor solicita las credenciales de integración (Client ID y Client secret). Deben introducirse en el formulario de Mobysuite, no en este repositorio ni en el chat.
+Referencia: [Documentación oficial de paquetes e instalación](https://developers.openai.com/plugins/build/plugins), [envío y publicación](https://developers.openai.com/plugins/deploy/submission).

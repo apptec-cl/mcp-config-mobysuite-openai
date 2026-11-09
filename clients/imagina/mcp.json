@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "mobysuite-reports-imagina": {
+      "type": "streamable-http",
+      "url": "https://mcp.mobysuite.com/imagina/reports"
+    }
+  }
+}

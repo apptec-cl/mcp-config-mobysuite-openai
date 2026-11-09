@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     manifest = json.loads((ROOT / "plugin.json").read_text())
-    mcp = json.loads((ROOT / "mcp.json").read_text())
+    mcp = json.loads((ROOT / "config/mcp.public.json").read_text())
     assert manifest["$schema"] == "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
     assert mcp["$schema"] == "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
     extension = manifest["extensions"]["com.openai"]
@@ -33,7 +33,17 @@ def main():
     assert compatibility["mcpServers"] == "./.mcp.json"
     local_mcp = json.loads((ROOT / ".mcp.json").read_text())
     assert local_mcp["mcpServers"]["mobysuite-reports"]["url"] == "https://mcp.mobysuite.com/copernico/reports"
-    files = {"plugin.json", "mcp.json"}
+    assert extension["onboardingSkill"] == "./skills/setup/SKILL.md"
+    assert (ROOT / "skills/setup/SKILL.md").is_file()
+    runtime = json.loads((ROOT / "mcp.json").read_text())
+    assert runtime["mcpServers"]["mobysuite-reports"] == {
+        "type": "streamable-http", "url": "https://mcp.mobysuite.com/copernico/reports"
+    }
+    # El setup Git usa un cliente concreto y no se incluye en el ZIP público.
+    extension.pop("onboardingSkill")
+    interface["displayName"] = "Mobysuite Reports"
+    interface["shortDescription"] = "Sales reports for managers"
+    files = set()
     for field in ("logo", "composerIcon"):
         path = (ROOT / interface[field]).resolve()
         assert path.is_relative_to(ROOT), "El icono debe estar dentro del paquete"
@@ -59,10 +69,12 @@ def main():
     destination.parent.mkdir(exist_ok=True)
     prefix = manifest["name"] + "/"
     with zipfile.ZipFile(destination, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr(prefix + "plugin.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+        archive.writestr(prefix + "mcp.json", json.dumps(mcp, indent=2) + "\n")
         for relative in sorted(files):
             archive.write(ROOT / relative, prefix + relative)
     with zipfile.ZipFile(destination) as archive:
-        assert set(archive.namelist()) == {prefix + name for name in files}
+        assert set(archive.namelist()) == {prefix + name for name in files | {"plugin.json", "mcp.json"}}
         assert archive.testzip() is None
         for name in ("plugin.json", "mcp.json"):
             json.loads(archive.read(prefix + name))

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "mobysuite-reports-imagina",
+  "version": "0.1.2",
+  "description": "Sales reporting for managers using Mobysuite.",
+  "author": {
+    "name": "Mobysuite"
+  },
+  "keywords": [
+    "mobysuite",
+    "sales",
+    "reports",
+    "management"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Mobysuite Reports · Imagina",
+        "shortDescription": "Reportes de ventas · Imagina",
+        "longDescription": "Free sales reporting for managers and administrators using Mobysuite in Chile. Connect your Mobysuite account through OAuth to query sales reports. The MCP integration does not store queries or report results.",
+        "developerName": "Mobysuite",
+        "category": "Data & Analytics",
+        "capabilities": [],
+        "defaultPrompt": "Help me review the sales reports available in my Mobysuite account.",
+        "websiteURL": "https://mobysuite.com/cl",
+        "logo": "./assets/icon.png",
+        "composerIcon": "./assets/icon.png"
+      },
+      "publication": {
+        "release_notes": "Initial package for the Mobysuite sales reporting integration.",
+        "countries": [
+          "CL"
+        ],
+        "translations": {
+          "es-CL": {
+            "subtitle": "Reportes de ventas gerenciales",
+            "description": "Complemento gratuito para consultar reportes de ventas de Mobysuite en Chile, destinado a gerentes y administradores. Conecta tu cuenta mediante OAuth. La integración MCP solo consulta datos y no guarda las consultas ni los resultados de los reportes."
+          }
+        }
+      },
+      "review": {
+        "commerce": false,
+        "commerce_description": "The plugin is free and does not offer purchases or payment processing.",
+        "prompts": [
+          "Ayúdame a revisar los reportes de ventas disponibles en mi cuenta de Mobysuite."
+        ]
+      },
+      "onboardingSkill": "./skills/setup/SKILL.md"
+    }
+  }
+}

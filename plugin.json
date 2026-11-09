@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "mobysuite-reports",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sales reporting for managers using Mobysuite.",
   "author": {
     "name": "Mobysuite"
@@ -15,8 +15,8 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Mobysuite Reports",
-        "shortDescription": "Sales reports for managers",
+        "displayName": "Mobysuite Reports · Copérnico",
+        "shortDescription": "Reportes de ventas · Copérnico",
         "longDescription": "Free sales reporting for managers and administrators using Mobysuite in Chile. Connect your Mobysuite account through OAuth to query sales reports. The MCP integration does not store queries or report results.",
         "developerName": "Mobysuite",
         "category": "Data & Analytics",
@@ -44,7 +44,8 @@
         "prompts": [
           "Ayúdame a revisar los reportes de ventas disponibles en mi cuenta de Mobysuite."
         ]
-      }
+      },
+      "onboardingSkill": "./skills/setup/SKILL.md"
     }
   }
 }
