@@ -1,5 +1,13 @@
 # Diagnóstico MCP del 9 de noviembre de 2026
 
+## Endpoint compartido y Customer editable, versión 0.2.0
+
+El publicador proporcionó `https://mcp.mobysuite.com/editable/reports` como endpoint común. Sin token devuelve HTTP 401 y anuncia metadatos de recurso protegido cuya propiedad `resource` coincide con esa URL. Conserva el servidor de autorización `https://mcp.mobysuite.com` y el scope `mcp:tools`.
+
+Se actualizaron la configuración Git, la de compatibilidad y la propuesta pública a esa URL, conservando la identidad `mobysuite-reports`. Se retiraron del catálogo y de las fuentes generadas las variantes por inmobiliaria. La versión 0.2.0 se instaló con éxito y el lector de Codex reconoce el MCP y su skill de setup.
+
+Se inició OAuth del propio complemento, con el nuevo recurso `/editable/reports`. En el formulario de Mobysuite se verificó **Customer vacío y editable**, junto con Client ID y Client secret. No se rellenaron credenciales mediante el agente ni se incluyeron en el repositorio. La finalización de esa autorización y el descubrimiento posterior de herramientas están pendientes de la acción del usuario. También falta comprobar el aislamiento entre Customer y las credenciales, y el control de roles.
+
 ## Onboarding del complemento, versión 0.1.2
 
 Se consultó `plugin/read` del app-server instalado de Codex antes y después del cambio. La versión 0.1.1 presentaba `mcpServers: []` y ninguna skill de onboarding. Una prueba con paquetes mínimos aisló la causa: este lector acepta la entrada portable básica `streamable-http`, pero descarta la entrada al agregar `extensions.com.openai` con `auth` o `urlTemplates`.

@@ -59,7 +59,7 @@ Genera e inspecciona `dist/mobysuite-reports-DRAFT.zip`, con manifiestos portabl
 - `reports_list_projects` falló anteriormente por el formato de salida estructurada; véase [diagnóstico](docs/mcp-diagnostics.md).
 - El icono oficial procede de `https://mobysuite.com/icon.svg` y se preparó en PNG de 512 × 512.
 
-El formulario editable y la nueva autorización requieren verificación en el host. El control de roles, la correspondencia entre Customer y credenciales y el aislamiento entre inmobiliarias deben verificarse en el servidor, cuya implementación no está en este repositorio.
+La versión 0.2.0 se instaló en Codex. Se inició OAuth del propio complemento para `/editable/reports` y se verificó visualmente que el formulario muestra **Customer vacío y editable**, además de Client ID y Client secret. Completar la nueva autorización y descubrir herramientas sigue pendiente de la acción del usuario. El control de roles, la correspondencia entre Customer y credenciales y el aislamiento entre inmobiliarias deben verificarse en el servidor, cuya implementación no está en este repositorio.
 
 Según el publicador, el MCP solo consulta datos y no guarda consultas ni resultados.
 
