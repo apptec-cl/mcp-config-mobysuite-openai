@@ -3,14 +3,21 @@
   "mcpServers": {
     "mobysuite-reports": {
       "type": "streamable-http",
-      "url": "https://mcp.mobysuite.com/copernico/reports",
+      "url": "https://mcp.mobysuite.com/{cliente}/reports",
       "extensions": {
         "com.openai": {
           "auth": {
             "type": "oauth",
-            "client": { "mode": "dcr" },
-            "baseScopes": ["mcp:tools"]
-          }
+            "client": {
+              "mode": "dcr"
+            },
+            "baseScopes": [
+              "mcp:tools"
+            ]
+          },
+          "urlTemplates": [
+            "https://mcp.mobysuite.com/{cliente}/reports"
+          ]
         }
       }
     }

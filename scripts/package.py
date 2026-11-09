@@ -36,7 +36,11 @@ def main():
         files.add(path.relative_to(ROOT).as_posix())
 
     server = mcp["mcpServers"]["mobysuite-reports"]
-    assert server["url"] == "https://mcp.mobysuite.com/copernico/reports"
+    template = "https://mcp.mobysuite.com/{cliente}/reports"
+    assert server["url"] == template
+    assert server["extensions"]["com.openai"]["urlTemplates"] == [template]
+    for client in ("copernico", "imagina"):
+        assert template.format(cliente=client) == f"https://mcp.mobysuite.com/{client}/reports"
     auth = server["extensions"]["com.openai"]["auth"]
     assert auth["type"] == "oauth" and auth["client"]["mode"] == "dcr"
     assert auth["baseScopes"] == ["mcp:tools"]
