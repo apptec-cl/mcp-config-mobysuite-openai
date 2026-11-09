@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "mobysuite-reports",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Sales reporting for managers using Mobysuite.",
   "author": {
     "name": "Mobysuite"
@@ -23,8 +23,8 @@
         "capabilities": [],
         "defaultPrompt": "Help me review the sales reports available in my Mobysuite account.",
         "websiteURL": "https://mobysuite.com/cl",
-        "logo": "assets/icon.png",
-        "composerIcon": "assets/icon.png"
+        "logo": "./assets/icon.png",
+        "composerIcon": "./assets/icon.png"
       },
       "publication": {
         "release_notes": "Initial package for the Mobysuite sales reporting integration.",

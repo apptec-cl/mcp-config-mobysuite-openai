@@ -1,0 +1,21 @@
+{
+  "name": "mobysuite-reports",
+  "version": "0.1.1",
+  "description": "Sales reporting for managers using Mobysuite.",
+  "author": {
+    "name": "Mobysuite"
+  },
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Mobysuite Reports",
+    "shortDescription": "Sales reports for managers",
+    "longDescription": "Free sales reporting for managers and administrators using Mobysuite in Chile. Connect your Mobysuite account through OAuth to query sales reports. The MCP integration does not store queries or report results.",
+    "developerName": "Mobysuite",
+    "category": "Data & Analytics",
+    "capabilities": [],
+    "defaultPrompt": "Help me review the sales reports available in my Mobysuite account.",
+    "websiteURL": "https://mobysuite.com/cl",
+    "logo": "./assets/icon.png",
+    "composerIcon": "./assets/icon.png"
+  }
+}

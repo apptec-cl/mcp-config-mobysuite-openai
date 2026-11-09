@@ -24,6 +24,15 @@ def main():
     assert "apps" not in manifest and "apps" not in extension
     assert not (ROOT / ".app.json").exists()
 
+    # El ZIP público incluye solo el formato portable; el overlay local de
+    # Codex usa una URL concreta de prueba y queda fuera del ZIP.
+    compatibility = json.loads((ROOT / ".codex-plugin/plugin.json").read_text())
+    assert compatibility["version"] == manifest["version"]
+    assert compatibility["name"] == manifest["name"]
+    assert compatibility["interface"] == interface
+    assert compatibility["mcpServers"] == "./.mcp.json"
+    local_mcp = json.loads((ROOT / ".mcp.json").read_text())
+    assert local_mcp["mcpServers"]["mobysuite-reports"]["url"] == "https://mcp.mobysuite.com/copernico/reports"
     files = {"plugin.json", "mcp.json"}
     for field in ("logo", "composerIcon"):
         path = (ROOT / interface[field]).resolve()
