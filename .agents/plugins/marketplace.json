@@ -1,0 +1,20 @@
+{
+  "name": "mobysuite",
+  "interface": {
+    "displayName": "Mobysuite"
+  },
+  "plugins": [
+    {
+      "name": "mobysuite-reports",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Data & Analytics"
+    }
+  ]
+}

@@ -33,7 +33,19 @@ El servidor anuncia OAuth con flujo de código de autorización, PKCE S256, regi
 
 No incluyas contraseñas, tokens ni credenciales de revisores en este repositorio. El cliente debe completar OAuth mediante el flujo del host. La cuenta de prueba para revisores se configura en los campos seguros del portal.
 
-## Generar el paquete
+## Agregar este repositorio como marketplace en Codex
+
+El catálogo está en `.agents/plugins/marketplace.json` y referencia el complemento situado en la raíz del repositorio.
+
+En **Complementos → Agregar → Agregar marketplace**, usa:
+
+- Origen: `https://github.com/apptec-cl/mcp-config-mobysuite-openai`
+- Referencia de Git: `main`
+- Rutas dispersas: dejar vacío.
+
+Después de agregar el marketplace, abre el directorio, selecciona la fuente **Mobysuite** e instala **Mobysuite Reports**. La conexión OAuth y la plantilla de cliente siguen pendientes de verificación en el host. Agregar el catálogo no publica el complemento en el directorio público de OpenAI.
+
+## Generar el paquete ZIP
 
 Requiere Python 3; no necesita dependencias adicionales.
 
