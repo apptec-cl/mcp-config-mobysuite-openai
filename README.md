@@ -59,6 +59,7 @@ La plantilla de publicación propuesta es `https://mcp.mobysuite.com/{cliente}/r
 
 - Los endpoints de Copérnico e Imagina responden HTTP 401 sin token y anuncian recursos OAuth correspondientes a su ruta.
 - La conexión independiente `mobysuite` de Copérnico completó OAuth y expuso 18 herramientas. Esa prueba es independiente del complemento Git.
+- El MCP del propio complemento `mobysuite-reports` también completó OAuth: Codex confirmó `authStatus: oAuth` y 18 herramientas con el complemento instalado, habilitado y su onboarding activo. La apertura automática desde el botón de instalación aún requiere prueba visual.
 - `reports_list_projects` falló por formato de salida estructurada en el servidor: véase [diagnóstico](docs/mcp-diagnostics.md).
 - El icono oficial procede de `https://mobysuite.com/icon.svg` y está preparado en PNG de 512 × 512.
 

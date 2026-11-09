@@ -13,7 +13,9 @@ Comprobaciones realizadas:
 - `mcpServerStatus/list` distinguió `mobysuite` (conexión independiente autorizada, 18 herramientas) de `mobysuite-reports` (MCP del complemento, `notLoggedIn`, cero herramientas antes del login).
 - Se inició `mcpServer/oauth/login` con el nombre real `mobysuite-reports`. El host generó una URL de autorización y se abrió el formulario de Mobysuite para Copérnico, solicitando Client ID y Client secret. No se copiaron credenciales al repositorio.
 
-La autorización de este nuevo intento requiere que el usuario complete el formulario. No se ha verificado todavía que el botón de instalación en la interfaz abra automáticamente el flujo, ni el aspecto visual del icono. La skill de setup puede guiar el flujo soportado, pero no reemplaza el cliente OAuth ni crea una conexión independiente.
+El usuario completó el formulario de este nuevo intento. Una consulta posterior de `mcpServerStatus/list` confirmó **`mobysuite-reports`: `authStatus: oAuth`, 18 herramientas**, mientras `plugin/read` confirmó el complemento instalado, habilitado y con onboarding activo. Esta comprobación corresponde al MCP del propio complemento y no depende de confundirlo con la conexión independiente `mobysuite`.
+
+No se ha verificado todavía que el botón de instalación en la interfaz abra automáticamente el flujo, ni el aspecto visual del icono. La skill de setup puede guiar el flujo soportado, pero no reemplaza el cliente OAuth ni crea una conexión independiente. Descubrir las herramientas no prueba que todas sus respuestas sean válidas; el fallo de listado documentado abajo sigue pendiente de una corrección y nueva prueba.
 
 ## Autenticación y descubrimiento
 
