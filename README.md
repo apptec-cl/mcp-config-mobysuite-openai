@@ -74,7 +74,7 @@ Según lo confirmado por el publicador, el MCP solo consulta datos y no guarda c
 6. Grabar una demo real, verificar que los revisores puedan verla e incorporar la URL y los casos al manifiesto.
 7. Generar e inspeccionar el paquete final, cargarlo en el portal y resolver los requisitos y hallazgos antes de enviarlo a revisión.
 
-No se ha probado el inicio de sesión, el control de roles ni la ejecución de herramientas. Tampoco se ha creado una publicación pública o enviado el complemento a revisión.
+La conexión independiente `mobysuite` completó OAuth y expuso 18 herramientas. Una prueba de `reports_list_projects` falló por el formato de salida estructurada del servidor. El control de roles, el aislamiento entre organizaciones y la conexión del propio complemento Git siguen pendientes. Véase [el diagnóstico MCP](docs/mcp-diagnostics.md). No se ha creado una publicación pública ni enviado el complemento a revisión.
 
 Referencia: [Envío y publicación de complementos en OpenAI](https://developers.openai.com/plugins/deploy/submission).
 
