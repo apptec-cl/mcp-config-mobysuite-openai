@@ -3,7 +3,7 @@
   "mcpServers": {
     "mobysuite-reports": {
       "type": "streamable-http",
-      "url": "https://mcp.mobysuite.com/copernico/reports"
+      "url": "https://mcp.mobysuite.com/editable/reports"
     }
   }
 }

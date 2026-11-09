@@ -24,26 +24,22 @@ def main():
     assert "apps" not in manifest and "apps" not in extension
     assert not (ROOT / ".app.json").exists()
 
-    # El ZIP público incluye solo el formato portable; el overlay local de
-    # Codex usa una URL concreta de prueba y queda fuera del ZIP.
+    # El ZIP público incluye el formato portable, la guía de setup y el icono.
+    # El overlay de compatibilidad local queda fuera del ZIP.
     compatibility = json.loads((ROOT / ".codex-plugin/plugin.json").read_text())
     assert compatibility["version"] == manifest["version"]
     assert compatibility["name"] == manifest["name"]
     assert compatibility["interface"] == interface
     assert compatibility["mcpServers"] == "./.mcp.json"
     local_mcp = json.loads((ROOT / ".mcp.json").read_text())
-    assert local_mcp["mcpServers"]["mobysuite-reports"]["url"] == "https://mcp.mobysuite.com/copernico/reports"
+    assert local_mcp["mcpServers"]["mobysuite-reports"]["url"] == "https://mcp.mobysuite.com/editable/reports"
     assert extension["onboardingSkill"] == "./skills/setup/SKILL.md"
     assert (ROOT / "skills/setup/SKILL.md").is_file()
     runtime = json.loads((ROOT / "mcp.json").read_text())
     assert runtime["mcpServers"]["mobysuite-reports"] == {
-        "type": "streamable-http", "url": "https://mcp.mobysuite.com/copernico/reports"
+        "type": "streamable-http", "url": "https://mcp.mobysuite.com/editable/reports"
     }
-    # El setup Git usa un cliente concreto y no se incluye en el ZIP público.
-    extension.pop("onboardingSkill")
-    interface["displayName"] = "Mobysuite Reports"
-    interface["shortDescription"] = "Sales reports for managers"
-    files = set()
+    files = {"skills/setup/SKILL.md"}
     for field in ("logo", "composerIcon"):
         path = (ROOT / interface[field]).resolve()
         assert path.is_relative_to(ROOT), "El icono debe estar dentro del paquete"
@@ -55,11 +51,8 @@ def main():
         files.add(path.relative_to(ROOT).as_posix())
 
     server = mcp["mcpServers"]["mobysuite-reports"]
-    template = "https://mcp.mobysuite.com/{cliente}/reports"
-    assert server["url"] == template
-    assert server["extensions"]["com.openai"]["urlTemplates"] == [template]
-    for client in ("copernico", "imagina"):
-        assert template.format(cliente=client) == f"https://mcp.mobysuite.com/{client}/reports"
+    assert server["url"] == "https://mcp.mobysuite.com/editable/reports"
+    assert "urlTemplates" not in server["extensions"]["com.openai"]
     auth = server["extensions"]["com.openai"]["auth"]
     assert auth["type"] == "oauth" and auth["client"]["mode"] == "dcr"
     assert auth["baseScopes"] == ["mcp:tools"]

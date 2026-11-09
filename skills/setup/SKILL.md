@@ -1,41 +1,44 @@
 ---
 name: setup
-description: Configurar y verificar la conexión OAuth de Mobysuite Reports después de instalar el complemento o cuando el usuario solicita conectar su cuenta.
+description: Configurar y verificar Mobysuite Reports, elegir la inmobiliaria en el formulario OAuth y conectar la cuenta después de instalar el complemento.
 ---
 
 # Conectar Mobysuite Reports
 
-Esta instalación desde Git corresponde a **Copérnico**, con URL
-`https://mcp.mobysuite.com/copernico/reports`.
+Este complemento usa un único endpoint compartido:
+`https://mcp.mobysuite.com/editable/reports`.
+La inmobiliaria se indica en el campo **Customer** del formulario OAuth de
+Mobysuite; `editable` es la ruta del endpoint y no el identificador de la empresa.
 
-1. Explica al usuario qué organización está conectando. Si solicita otra,
-   no continúes con Copérnico ni cambies la ruta de un token existente. Para
-   Imagina, indica que debe instalar la variante «Mobysuite Reports · Imagina»
-   del mismo marketplace. Para otro cliente, pide su identificador para que el
-   mantenedor prepare la variante; no prometas un selector que el host no ofrece.
-2. Comprueba las herramientas y el estado de autenticación del MCP que pertenece
-   a este complemento. No cuentes como prueba una conexión independiente llamada
-   `mobysuite`. Si no aparece ningún MCP del complemento, informa del fallo de
-   registro y pide actualizar el marketplace y el complemento; no inventes reportes.
-3. Si el host muestra «Conectar» o «Iniciar sesión» para el MCP del complemento,
-   guía al usuario a esa acción y al flujo OAuth soportado por el host. No abras
-   `/authorize` sin los parámetros generados por el cliente OAuth. No crees una
-   conexión independiente ni ejecutes `codex mcp add` como sustituto del onboarding.
-4. El proveedor abre un formulario de Mobysuite. El usuario introduce allí sus
-   credenciales de integración (Client ID y Client secret) y completa el
-   consentimiento. Nunca solicites que pegue credenciales o tokens en el chat,
-   archivos del complemento o repositorio. No rellenes ni aceptes el consentimiento
-   en su nombre sin la autorización que requiera el host.
-5. Verifica el resultado: autenticación completada y herramientas descubiertas
-   en la conexión del complemento. Si ya existe una sesión válida, el host puede
-   reutilizarla; no cierres sesiones ni borres tokens para forzar un formulario.
-6. Ofrece una prueba de lectura mínima, como listar proyectos. Comprueba si la
-   herramienta devuelve error antes de afirmar que funciona. Un error del formato
-   de respuesta del servidor es distinto de un fallo OAuth; informa cuál ocurrió.
+1. Explica el flujo: conectar, indicar Customer, introducir las credenciales de
+   integración en Mobysuite y autorizar. Usa el identificador de inmobiliaria que
+   el usuario conoce, por ejemplo `copernico` o `imagina`. No inventes una empresa
+   ni asumas que el usuario pertenece a una por tener su URL.
+2. Comprueba el MCP y el estado de autenticación del propio complemento
+   `mobysuite-reports`. Una conexión independiente llamada `mobysuite` o una
+   conexión antigua a `/copernico/reports` no demuestra que esta conexión funcione.
+   Si no se registra el servidor, informa del problema y pide actualizar el
+   marketplace/complemento antes de probar reportes.
+3. Guía al usuario a la acción de conexión o inicio de sesión del host. Usa el
+   flujo OAuth generado por ese cliente para `/editable/reports`; nunca abras
+   `/authorize` sin los parámetros de OAuth. No crees otro MCP independiente ni
+   uses `codex mcp add` como sustituto de la conexión del complemento.
+4. En el formulario de Mobysuite, el usuario debe editar **Customer** e introducir
+   su Client ID y Client secret de integración. Esas credenciales van únicamente
+   en el formulario de Mobysuite. Nunca las pidas en el chat, el repositorio ni
+   archivos del complemento. El usuario completa el consentimiento.
+5. Si Customer está bloqueado, no aparece o el host sigue usando la ruta de una
+   empresa fija, reporta la discrepancia; no declares resuelto el onboarding.
+6. Comprueba autenticación completada y herramientas descubiertas en el MCP del
+   complemento. El servidor debe validar que las credenciales corresponden al
+   Customer y restringir datos y roles. La edición del campo no concede permisos.
+   No afirmes que se verificó ese control si solo se probó OAuth.
+7. Si ya hay sesión, el host puede reutilizarla. No cierres sesiones ni borres
+   tokens para forzar un formulario. Para cambiar de inmobiliaria, usa el flujo
+   de reconexión del host y confirma el cambio de cuenta antes de actuar.
+8. Ofrece una prueba mínima de lectura, como listar proyectos. Revisa errores
+   antes de afirmar que funciona. Distingue fallos de autenticación de errores
+   del contrato de salida del servidor. No inventes companyId ni IDs de proyecto.
 
-No consultes datos de otra organización ni inventes `companyId`, IDs de proyectos
-o permisos. No cambies registros ni solicites permisos adicionales como prueba.
-
-La instalación desde Git no publica el complemento en el directorio público.
-Si la autorización no se inicia automáticamente, indica el estado observado y la
-acción de conexión disponible; no afirmes que instalar equivale a estar conectado.
+No consultes datos de otra inmobiliaria ni cambies registros para probar acceso.
+La instalación Git no publica el complemento en el directorio público de OpenAI.

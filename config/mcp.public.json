@@ -3,7 +3,7 @@
   "mcpServers": {
     "mobysuite-reports": {
       "type": "streamable-http",
-      "url": "https://mcp.mobysuite.com/{cliente}/reports",
+      "url": "https://mcp.mobysuite.com/editable/reports",
       "extensions": {
         "com.openai": {
           "auth": {
@@ -14,10 +14,7 @@
             "baseScopes": [
               "mcp:tools"
             ]
-          },
-          "urlTemplates": [
-            "https://mcp.mobysuite.com/{cliente}/reports"
-          ]
+          }
         }
       }
     }

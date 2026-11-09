@@ -2,76 +2,74 @@
 
 Complemento gratuito para consultar reportes de ventas de Mobysuite, destinado a gerentes y administradores en Chile. **En preparación; no publicado en el directorio público de OpenAI.**
 
-## Instalar en Codex desde GitHub
+## Instalación y conexión
 
-En **Complementos → Agregar → Agregar marketplace**:
+En **Complementos → Agregar → Agregar marketplace**, usa:
 
 - Origen: `https://github.com/apptec-cl/mcp-config-mobysuite-openai`
 - Referencia: `main`
 - Rutas dispersas: vacío.
 
-En la fuente **Mobysuite**, elige la organización antes de instalar:
+Selecciona la fuente **Mobysuite** e instala **Mobysuite Reports**. Desde la versión **0.2.0**, hay un único complemento con un endpoint compartido:
 
-| Complemento | Cliente | URL MCP |
-| --- | --- | --- |
-| Mobysuite Reports · Copérnico | Copérnico | `https://mcp.mobysuite.com/copernico/reports` |
-| Mobysuite Reports · Imagina | Imagina | `https://mcp.mobysuite.com/imagina/reports` |
+```text
+https://mcp.mobysuite.com/editable/reports
+```
 
-La raíz del repositorio contiene la variante de Copérnico; `clients/imagina/` contiene la variante de Imagina. Se usan URLs concretas y nombres de servidor diferentes. Elegir una ruta no concede acceso: el servidor debe comprobar la organización y el rol del usuario.
+El flujo previsto es:
 
-## Conexión y onboarding
+1. Conectar el MCP del complemento mediante OAuth.
+2. En el formulario de Mobysuite, editar **Customer** con el identificador de la inmobiliaria, por ejemplo `copernico` o `imagina`.
+3. Introducir Client ID y Client secret de integración únicamente en Mobysuite y completar la autorización.
+4. Volver a Codex y comprobar que aparezcan las herramientas.
 
-1. Actualiza el marketplace e instala la variante de tu organización.
-2. Completa la acción de conexión OAuth ofrecida por Codex para el MCP del complemento. La política del catálogo es `ON_INSTALL`. Si el host reutiliza una sesión válida, puede no mostrar otro formulario.
-3. En el formulario de **Mobysuite**, introduce las credenciales de integración (Client ID y Client secret) y completa la autorización. No las pegues en el chat ni en el repositorio.
-4. La guía de setup del complemento comprueba la organización, el estado de conexión y las herramientas. No crea otro MCP independiente para simular una instalación correcta.
-5. Prueba una lectura mínima. Autenticación completada no equivale a que todas las herramientas respondan correctamente.
+`editable` identifica la ruta compartida, no una inmobiliaria. El servidor debe comprobar que las credenciales corresponden al Customer y aplicar los permisos de gerente o administrador. La edición del campo no otorga acceso por sí misma.
 
-La instalación desde Git usa descubrimiento OAuth estándar: el servidor anuncia el recurso protegido, el servidor de autorización, registro dinámico, PKCE S256 y scope `mcp:tools`.
+La guía de onboarding se encuentra en `skills/setup/SKILL.md`. Si ya existe una autorización válida, Codex puede reutilizarla. Una autorización anterior para `/copernico/reports` no demuestra que la nueva conexión funcione; hay que verificar específicamente el MCP `mobysuite-reports` con `/editable/reports`.
 
-### Corrección de la versión 0.1.2
+No compartas credenciales ni tokens por el chat o repositorio. No se cierra la conexión independiente `mobysuite` ni se borran sus tokens al actualizar el complemento.
 
-El lector local de Codex instalado descartó el MCP cuando la entrada de `mcp.json` contenía `extensions.com.openai`. Se reprodujo con configuraciones mínimas: el servidor básico `streamable-http` se descubre, pero agregar `auth` o `urlTemplates` bajo esa extensión deja `mcpServers` vacío. Añadir un overlay no resolvía la entrada portable inválida para ese lector.
+## Configuración Git y pública
 
-La configuración Git ahora usa el MCP básico con URL concreta. El lector de Codex reconoce ambos servidores y sus skills de setup, y resuelve las rutas del icono. La instalación, la acción automática de conexión y el resultado visual deben verificarse además en el host; los registros de prueba se detallan en `docs/mcp-diagnostics.md`.
+- `plugin.json`, `mcp.json`, `skills/setup/`, `assets/`: complemento Git con endpoint compartido.
+- `.codex-plugin/plugin.json`, `.mcp.json`: compatibilidad sincronizada.
+- `.agents/plugins/marketplace.json`: catálogo con una entrada.
+- `config/mcp.public.json`: mismo endpoint con metadatos OAuth para el portal de publicación.
+- `docs/pages/`: borradores de privacidad, términos y soporte; no son textos definitivos.
 
-## Archivos y generación
+El lector de Codex probado descarta una entrada MCP Git con `extensions.com.openai`. Por ello `mcp.json` local declara solo transporte y URL, y OAuth se descubre mediante los metadatos del servidor. El ZIP público usa la configuración separada, con OAuth DCR y scope `mcp:tools`. Ya no se necesita `urlTemplates`.
 
-- `plugin.json`, `mcp.json`, `skills/setup/`, `assets/`: variante Git de Copérnico.
-- `.codex-plugin/plugin.json` y `.mcp.json`: compatibilidad sincronizada para clientes anteriores.
-- `clients/imagina/`: variante Git generada para Imagina.
-- `.agents/plugins/marketplace.json`: catálogo con ambas variantes.
-- `config/mcp.public.json`: propuesta de configuración pública con OAuth y plantilla `{cliente}`, pendiente de validación en el portal.
-- `docs/pages/`: borradores HTML de privacidad, términos y soporte. No son textos definitivos.
+Las variantes anteriores por inmobiliaria fueron retiradas del catálogo y del código generado. Si instalaste la antigua variante de Imagina, migra al complemento común mediante el flujo de desinstalación e instalación de Codex; este cambio del catálogo no borra una instalación ni revoca autorizaciones existentes.
+
+## Generar el ZIP
 
 Requiere Python 3, sin dependencias adicionales:
 
 ```sh
-python3 scripts/build_client_plugins.py
 python3 scripts/package.py
 ```
 
-El primer comando sincroniza Imagina con los componentes comunes. El segundo valida los archivos y genera `dist/mobysuite-reports-DRAFT.zip` para preparar la publicación pública: usa nombre genérico, `config/mcp.public.json` y el icono. Excluye el catálogo, las variantes Git, el setup específico de una organización y las páginas HTML. No es un ZIP listo para enviar a revisión.
+Genera e inspecciona `dist/mobysuite-reports-DRAFT.zip`, con manifiestos portables, onboarding y el icono. Excluye el catálogo Git, los overlays y las páginas HTML. El paquete sigue siendo un borrador y no está listo para revisión pública.
 
-La plantilla de publicación propuesta es `https://mcp.mobysuite.com/{cliente}/reports`. Su importación y flujo de selección aún deben validarse en el portal. La presencia de esta plantilla en el borrador público no implica que el Codex local ofrezca un formulario para resolverla. Para otros clientes, el mantenedor debe preparar una variante con la URL confirmada.
+## Verificaciones
 
-## Estado de pruebas
+- `/editable/reports` devuelve HTTP 401 sin token y anuncia su metadata de recurso protegido con la misma URL exacta.
+- El recurso anuncia `https://mcp.mobysuite.com` como servidor de autorización y `mcp:tools` como scope.
+- Antes de la migración, el MCP del complemento en 0.1.2 completó OAuth para la URL fija de Copérnico y expuso 18 herramientas. No equivale a una prueba del endpoint nuevo.
+- `reports_list_projects` falló anteriormente por el formato de salida estructurada; véase [diagnóstico](docs/mcp-diagnostics.md).
+- El icono oficial procede de `https://mobysuite.com/icon.svg` y se preparó en PNG de 512 × 512.
 
-- Los endpoints de Copérnico e Imagina responden HTTP 401 sin token y anuncian recursos OAuth correspondientes a su ruta.
-- La conexión independiente `mobysuite` de Copérnico completó OAuth y expuso 18 herramientas. Esa prueba es independiente del complemento Git.
-- El MCP del propio complemento `mobysuite-reports` también completó OAuth: Codex confirmó `authStatus: oAuth` y 18 herramientas con el complemento instalado, habilitado y su onboarding activo. La apertura automática desde el botón de instalación aún requiere prueba visual.
-- `reports_list_projects` falló por formato de salida estructurada en el servidor: véase [diagnóstico](docs/mcp-diagnostics.md).
-- El icono oficial procede de `https://mobysuite.com/icon.svg` y está preparado en PNG de 512 × 512.
+El formulario editable y la nueva autorización requieren verificación en el host. El control de roles, la correspondencia entre Customer y credenciales y el aislamiento entre inmobiliarias deben verificarse en el servidor, cuya implementación no está en este repositorio.
 
-Según el publicador, el MCP solo consulta datos y no guarda consultas ni resultados; el acceso está destinado a gerentes o administradores. El servidor y su control de roles no están en este repositorio. El aislamiento entre organizaciones y el rechazo de tokens cruzados siguen pendientes de prueba.
+Según el publicador, el MCP solo consulta datos y no guarda consultas ni resultados.
 
 ## Pendiente para el directorio público
 
-1. Revisar y completar las páginas de privacidad y términos: razón social, tratamiento de credenciales OAuth y registros técnicos, proveedores y solicitudes de privacidad. Contacto: `soporte@mobysuite.com`.
-2. Publicar soporte, privacidad y términos e incorporar URLs verificadas. La política actual de `https://mobysuite.com/cl/politicas` aún no describe esta integración MCP.
-3. Validar el paquete público y la plantilla en el portal; completar identidad y dominio.
-4. Corregir las respuestas del servidor y verificar permisos, esquemas y anotaciones de herramientas.
-5. Preparar y ejecutar cinco casos positivos y tres negativos, grabar una demo real y configurar acceso seguro para revisores.
-6. Resolver las comprobaciones del portal antes del envío a revisión.
+1. Verificar OAuth del endpoint compartido y la selección de inmobiliaria; corregir el contrato de respuesta de las herramientas.
+2. Completar privacidad y términos: razón social, credenciales OAuth y registros técnicos, proveedores y solicitudes de privacidad. Contacto: `soporte@mobysuite.com`.
+3. Publicar soporte, privacidad y términos e incorporar URLs verificadas. La política en `https://mobysuite.com/cl/politicas` aún debe cubrir esta integración.
+4. Completar identidad y dominio en el portal; verificar permisos, esquemas y anotaciones.
+5. Preparar y ejecutar cinco casos positivos y tres negativos, grabar una demo real y configurar una cuenta de prueba para revisores en los campos seguros del portal.
+6. Resolver las comprobaciones del portal antes de enviar a revisión.
 
-Referencia: [Documentación oficial de paquetes e instalación](https://developers.openai.com/plugins/build/plugins), [envío y publicación](https://developers.openai.com/plugins/deploy/submission).
+Referencias: [paquetes e instalación](https://developers.openai.com/plugins/build/plugins), [envío y publicación](https://developers.openai.com/plugins/deploy/submission).

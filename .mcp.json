@@ -2,7 +2,7 @@
   "mcpServers": {
     "mobysuite-reports": {
       "type": "http",
-      "url": "https://mcp.mobysuite.com/copernico/reports"
+      "url": "https://mcp.mobysuite.com/editable/reports"
     }
   }
 }
